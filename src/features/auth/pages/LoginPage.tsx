@@ -1,5 +1,5 @@
 import { Button } from '@/shared/ui/button'
-import { FlowBackground } from '../components/FlowBackground.tsx'
+import  FlowBackground  from '../components/FlowBackground.tsx'
 import { LoginForm } from '../components/LoginForm.tsx'
 import { useLogout } from '../hooks/useLogout.ts'
 import { useSession } from '../hooks/useSession.ts'
