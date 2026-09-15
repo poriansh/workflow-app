@@ -15,6 +15,19 @@ Folder architecture: [`docs/architecture.md`](docs/architecture.md). BFF contrac
 npm install
 cp .env.example .env
 npm run dev
+npm run lint
+npm run build
 ```
 
 `VITE_GENIUS_API_URL` defaults in `.env.example` to `http://localhost:8090`. Staging BFF is `https://web.geniusai.io`.
+
+### Git hooks (Husky)
+
+Installed via `prepare` → `husky`. Hooks live in `.husky/`.
+
+| Hook | Runs | Blocks when |
+| --- | --- | --- |
+| `pre-commit` | `npm run lint` (`eslint .`) | ESLint exits non-zero |
+| `pre-push` | `npm run build` (`tsc -b && vite build`) | Build exits non-zero |
+
+ESLint config: `eslint.config.js` (flat). Generated `src/gen` and `dist` are ignored.

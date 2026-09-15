@@ -156,12 +156,14 @@ Before considering a task complete:
 4. Verify the relevant documentation reflects the final implementation.
 5. Check for duplicated or conflicting documentation.
 6. Run the most relevant available validation:
-   - typecheck (`npx tsc -b`)
-   - lint
-   - tests
-   - build
+   - typecheck / lint / tests / build (`npm run lint`, `npm run build`)
    - or the smallest relevant verification command
 7. If verification cannot be run, explicitly state what could not be verified and why.
+
+Git hooks (do not bypass without an explicit user request):
+
+- `pre-commit` → `npm run lint`
+- `pre-push` → `npm run build`
 
 Never claim that something was verified if it was not actually verified.
 

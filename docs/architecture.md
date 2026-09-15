@@ -217,6 +217,17 @@ READ docs + rules → INSPECT code → PLAN → IMPLEMENT → UPDATE docs → VE
 - After code changes that affect architecture, API, auth, routing, state, infrastructure, or conventions, update docs automatically — do not wait to be asked.
 - Verify with the smallest relevant command; never claim unverified results.
 
+### Git hooks (current)
+
+Husky is configured in this repo (npm + `.husky/`).
+
+| Hook | Command | Purpose |
+| --- | --- | --- |
+| `pre-commit` | `npm run lint` | Block commits when ESLint fails |
+| `pre-push` | `npm run build` | Block pushes when the production build fails |
+
+`prepare` runs `husky` after `npm install`. Do not invent alternate lint/build commands for hooks; use these scripts.
+
 ### Layers
 
 ```text
