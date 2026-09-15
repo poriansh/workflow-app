@@ -1,0 +1,32 @@
+---
+description: Semantic color tokens and the existing Zustand theme store
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Theme
+
+## Current implementation
+
+- Colors: CSS variables in `src/index.css`, Tailwind utilities (`bg-background`, `text-foreground-muted`, `bg-surface`, …).
+- Light on `:root`. Dark on `.dark`.
+- Zustand store: `src/shared/hooks/darkmode/useThemeStore.ts`
+  - `theme: 'dark' | 'light'`
+  - `toggleTheme()`
+  - persist key `'theme'`
+  - first-load default (when unset) from `prefers-color-scheme` inside the store — this is **not** a live `system` mode
+- `ThemeToggle` reads store only; no `document` writes; no `useEffect`.
+- `App.tsx` toggles `document.documentElement` class `dark`.
+- `index.html` has no theme script. Do not add one.
+
+## Project standard
+
+Do not introduce:
+
+- `system` as a theme value
+- `setTheme` / `resetTheme`
+- `ThemeProvider` / theme context
+- a second theme store
+- theme logic outside the existing React/Zustand path
+
+Canvas tokens: `--canvas`, `--node`, `--node-border`, `--connection`. Add roles in `index.css`, then `@theme inline`.

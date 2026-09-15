@@ -1,0 +1,16 @@
+---
+description: Genius web is a browser client; contracts and docs live in sibling new-hires
+alwaysApply: true
+---
+
+# Project context
+
+`genius-web` is the browser UI only. It is not the BFF, runtime, or proto source.
+
+- Contracts: `../new-hires/proto/genius/`. Product meaning: `../new-hires/docs/`.
+- Do not invent RPCs, fields, or persistence. If it is not in a `.proto` or those docs, mark it unknown.
+- A dashboard mock, sample button, or local simulator does not prove a production service exists.
+- Staging BFF: `https://web.geniusai.io`. Local default: `http://localhost:8090` via `VITE_GENIUS_API_URL`.
+- Browser protocol: Connect JSON over HTTP/1.1 (`@connectrpc/connect-web`), not raw gRPC.
+
+Update this rule when `../new-hires/docs/bff-connect-client.md` or the architecture index changes.

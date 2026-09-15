@@ -1,0 +1,25 @@
+---
+description: Keep product workflows, runtime actions, and work items distinct; respect documented durability
+alwaysApply: true
+---
+
+# Domain boundaries
+
+Do not merge these in types or UI copy.
+
+- **Product workflow** (`ProductWorkflows`): canvas the UI owns. Publish stores `runtimeDefId`. No version-history RPC.
+- **Runtime action** (`RuntimeActions`): executable handler catalog. Day-to-day canvas ops use product RPCs. Build/list/delete needs `runtime.manage`.
+- **Work item** (`WorkItems`): accepted business obligation, not an action package.
+
+Edges are control only. Data wiring is `config.bindings` (`fromStep` + `path` or literals). Edge fields are `fromNode` / `toNode`, not `from` / `to`.
+
+Documented durability — re-verify before relying on it:
+
+- Durable: auth, IAM, product workflows, credentials, runtime defs/runs/catalog.
+- In-memory mock: decisions, agents, approvals, connectors, event bus.
+- Palette only: schedule/webhook triggers (Workforce OS goal calls webhook E2E unverified).
+- Credentials: create sends `secret`; responses are redacted. Never render secret material.
+
+Publish needs `workflows.publish`. Org scope comes from the JWT; do not let the client pick another tenant.
+
+Source: architecture index and the product workflows GUI guide under `../new-hires/docs/`.

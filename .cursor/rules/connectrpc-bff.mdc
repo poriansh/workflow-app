@@ -1,0 +1,41 @@
+---
+description: Call the Genius BFF only through generated ConnectRPC clients and the shared transport
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# ConnectRPC client
+
+Do not hand-roll `fetch` to `/genius.../Method`. Generate with Buf, then `createClient(Service, transport)`.
+
+## Shared transport (required)
+
+Use the single export from `src/infrastructure/config/transport.ts` for every normal Connect client.
+
+```ts
+// ❌ BAD — new transport / URL in a feature or second client module
+import { createConnectTransport } from "@connectrpc/connect-web"
+const transport = createConnectTransport({
+  baseUrl: import.meta.env.VITE_GENIUS_API_URL ?? "http://localhost:8090",
+})
+
+// ✅ GOOD
+import { createClient } from "@connectrpc/connect"
+import { transport } from "@/infrastructure/config/transport.ts"
+import { Auth } from "@/gen/genius/auth/v1/auth_pb.ts"
+
+export const authClient = createClient(Auth, transport)
+```
+
+That module owns `baseUrl` (`VITE_GENIUS_API_URL`, default `http://localhost:8090`) and app-wide interceptors (`authInterceptor`: bearer except on `Login` / `RefreshToken`, one refresh+retry on `unauthenticated`).
+
+Do not invent a second `createConnectTransport` for product clients. The only intentional bare transport is inside `authInterceptor` for `RefreshToken` (must not re-enter the bearer interceptor).
+
+## Other rules
+
+- Generate from `../new-hires` (`npx buf generate`), or point `buf.gen.yaml` `out` at this app's `src/gen`. Keep `buf.yaml` next to `proto/`.
+- `Auth.Register` is in the proto but docs say it is disabled. Invite with authenticated `Users.InviteUser`.
+- Connect JSON is camelCase (`fromNode`, `accessToken`), not proto snake_case.
+- Streams: `ExecuteToNode`, `DebugRun`, `SubscribeBuildEvents`, `WatchOverview`, `WatchAgentFleet`, `SubscribeEvents`. Docs call `SubscribeBuildEvents` a stub.
+
+Source: `../new-hires/docs/bff-connect-client.md`, `docs/backend/connectrpc.md`.

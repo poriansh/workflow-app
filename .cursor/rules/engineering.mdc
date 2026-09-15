@@ -1,0 +1,65 @@
+---
+description: Senior frontend engineering principles for genius-web
+alwaysApply: true
+---
+
+# Engineering
+
+Act as a senior React/TypeScript engineer. Prefer clear boundaries, explicit data flow, and small modules.
+
+**Simple + readable + maintainable** beats **generic + clever + abstract**.
+
+Mandatory process: `.cursor/rules/workflow.mdc`.
+
+Order for every non-trivial task: **READ docs/rules → INSPECT code → PLAN smallest change → IMPLEMENT → UPDATE docs when needed → VERIFY**. Do not code from the user prompt alone when project docs exist. Do not claim verification you did not run.
+
+## Clean code
+
+Prefer:
+
+- simple, readable, explicit, maintainable code
+- small focused components
+- existing project patterns
+- reuse of existing components/hooks/services
+
+Avoid:
+
+- unnecessary abstractions and generic wrappers
+- premature optimization
+- clever TypeScript
+- duplicated logic
+- unnecessary hooks, utilities, or architecture
+- refactoring without a concrete reason
+
+## Before an API change
+
+1. Read `docs/backend/` and the matching `../new-hires/proto`.
+2. Inspect `src/gen` when present.
+3. Confirm request, response, auth, and errors.
+4. If unclear, write `Unknown / Needs Verification`. Do not invent RPCs, fields, URLs, or auth behavior.
+
+## Layers
+
+```text
+UI → features → feature hooks/services → infrastructure → ConnectRPC
+```
+
+- UI does not build transports or Authorization headers.
+- Never edit generated files. Generate with Buf from `../new-hires`.
+
+## State and forms
+
+- TanStack Query = server state. Zustand = client/global UI state.
+- Do not duplicate server state in Zustand.
+- Theme store only: `'dark' | 'light'` + `toggleTheme`.
+- Forms: React Hook Form + Zod + `zodResolver` from `@hookform/resolvers/zod`. No custom resolver unless the stock one cannot work.
+- Streams are not unary queries.
+
+## Errors
+
+- Expected API/validation errors stay in the feature.
+- `src/app/providers/errorBoundary.tsx` (`react-error-boundary`) is for unexpected render failures. Fallback reloads via `onReset`. Do not show stack traces.
+
+## ConnectRPC
+
+Use generated `createClient`. Do not add Axios or hand-rolled `fetch` to Connect paths for BFF calls. See `connectrpc-bff.mdc`.

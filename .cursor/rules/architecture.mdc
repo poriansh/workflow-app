@@ -1,0 +1,55 @@
+---
+description: Folder architecture and placement rules for genius-web
+alwaysApply: true
+---
+
+# Architecture
+
+Follow `.cursor/rules/workflow.mdc` before any non-trivial change (read docs/rules first; update docs after structural or convention changes).
+
+Read `docs/architecture.md` first. The codebase is the source of truth for what exists. That doc separates **Current implementation** from **Project standard**. Do not treat a standard as a folder or route that already exists.
+
+## Do not change the architecture
+
+Never change the existing project architecture unless the user explicitly asks for an architectural change.
+
+Prefer extending the existing structure. Never move/rename layers for taste. Do not replace the router, TanStack Query, the Zustand theme store, or ConnectRPC.
+
+## Layers
+
+```text
+app → features → infrastructure / shared
+```
+
+| Area | Role |
+| --- | --- |
+| `src/app/` | Shell: layouts (`pageFrame`), providers, route table |
+| `src/features/` | Business domains (only `auth` exists today) |
+| `src/infrastructure/` | Shared `config/transport.ts` + Connect clients (`auth/`, …) |
+| `src/shared/` | Reused UI, theme, tokens, LoadingPage, NotFoundPage |
+
+- No business forms in `app/routes`.
+- `src/App.tsx` is the Vite render root, not a feature page.
+- Add `admin` / `agent` / `member` / `reseller` only when implementing that feature.
+
+## Current routes (do not invent others)
+
+All routes are in `src/app/routes/index.tsx`:
+
+- `/login` → lazy default-export `LoginPage` + Suspense `LoadingPage`
+- `*` → lazy default-export `NotFoundPage` + Suspense `LoadingPage`
+
+There is no `/` → `/login` redirect today. `/` hits `*`.
+
+## Naming
+
+- Follow existing file names and folders (including current spellings such as `ToggleThem`, `Loadingpage.tsx`). Do not rename unless asked.
+- Hooks: `useSomething.ts`. Schemas: `SomethingSchema.ts`.
+- No `common/`, `misc/`, `helpers/`, `temp/`, `new/`.
+
+## Related rules
+
+- Theme: `theme.mdc` — no theme script in `index.html`
+- API: `connectrpc-bff.mdc`
+- UI: `react-ui.mdc` (Login is the visual reference)
+- Workflow: `workflow.mdc`

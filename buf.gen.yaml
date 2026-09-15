@@ -1,0 +1,8 @@
+version: v2
+# Generates Connect-ES clients from the sibling briefing pack. Do not edit src/gen.
+plugins:
+  - local: protoc-gen-es
+    out: src/gen
+    opt:
+      - target=ts
+      - import_extension=.js

@@ -1,0 +1,62 @@
+---
+description: Visual language, motion, and accessibility for genius-web
+globs: src/**/*.tsx
+alwaysApply: true
+---
+
+# UI
+
+Login (`features/auth/pages/LoginPage.tsx`) is the **primary visual reference**. Future screens should feel like the same modern, minimal, premium SaaS/AI product.
+
+Placement: `.cursor/rules/architecture.mdc`.
+
+## Design language
+
+Prefer:
+
+- Persian RTL, Vazirmatn
+- clean typography and strong hierarchy
+- generous whitespace
+- soft surfaces, subtle borders, subtle shadows
+- restrained semantic color
+- responsive layouts
+- accessible UI
+- center-aligned textual content where Login / NotFound / error fallback do
+
+Login bar today: open layout (no card), `max-w-md`, `text-2xl` titles, `text-sm` muted body, borderless `bg-surface` fields, `shadow-none` buttons, semantic tokens only.
+
+Avoid:
+
+- generic dashboard templates
+- excessive cards or rounded containers
+- heavy borders or shadows
+- large decorative gradients
+- glassmorphism
+- noisy backgrounds
+- excessive colors
+- giant headings
+- template-looking shadcn compositions
+- unnecessary decoration / over-engineered effects
+
+Style with Tailwind v4 utilities mapped to `src/index.css`. No hard-coded hex/palette colors. No second CSS framework. No hardcoded BFF URL.
+
+## Loading UI
+
+`LoadingPage` is the Suspense fallback: minimal centered spinner, `PageFrame`, `motion-reduce:animate-none`, `role="status"`. Keep it simple.
+
+## Motion
+
+Subtle, purposeful, short. Prefer CSS/Tailwind. Do not add an animation library for a simple spinner or entrance.
+
+Allowed examples already in the project: `login-enter`, `flow-path`, `animate-spin`, hover/focus/press, theme class change.
+
+Honor `prefers-reduced-motion` (`motion-reduce`, and CSS disables `flow-path` / `login-enter`).
+
+## Accessibility
+
+- Semantic HTML, keyboard access, visible focus
+- Labels; form errors with `aria-invalid` / `aria-describedby` / `role="alert"`
+- One `h1` per screen; token contrast
+- Real buttons and links
+- Reduced-motion support
+- ARIA only when native HTML is insufficient

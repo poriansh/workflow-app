@@ -1,0 +1,190 @@
+---
+description: Mandatory documentation-first workflow for every non-trivial task
+alwaysApply: true
+---
+
+# Mandatory documentation-first workflow
+
+This rule applies to ALL future non-trivial tasks. Do not skip it because a task looks small.
+
+The codebase and project documentation are the primary sources of truth. Rules describe them; they do not invent architecture.
+
+```text
+READ
+→ relevant documentation
+→ applicable .cursor/rules/
+→ existing implementation + reuse search
+→ PLAN the smallest change
+→ IMPLEMENT
+→ UPDATE documentation when behavior/conventions changed
+→ VERIFY (typecheck/lint/tests/build as available)
+```
+
+Never start implementation based only on the user description when relevant project documentation already exists.
+
+---
+
+## 1. Documentation MUST be read before changes
+
+Before starting ANY non-trivial development task:
+
+1. Identify the documentation relevant to the requested task.
+2. Read that documentation completely enough to understand:
+   - current architecture
+   - current implementation
+   - existing conventions
+   - API/RPC contracts
+   - relevant technical decisions
+   - existing limitations or constraints
+3. Read ALL applicable `.cursor/rules/` files.
+4. Inspect the existing implementation before creating or changing anything.
+5. Search the repository for existing implementations or reusable patterns before creating new ones.
+
+Typical starting points:
+
+- `docs/architecture.md` — placement, current vs standard
+- `docs/backend/` — BFF/Connect mapping when APIs are involved
+- `../new-hires/proto` + `../new-hires/docs` — contracts and product meaning
+- Matching rules under `.cursor/rules/` (`architecture`, `engineering`, `connectrpc-bff`, `theme`, `react-ui`, `domain-boundaries`, …)
+
+---
+
+## 2. Documentation and implementation are sources of truth
+
+Treat project documentation **and** the actual current implementation as primary sources of truth.
+
+When documentation conflicts with the current implementation:
+
+- Do NOT silently assume the documentation is correct.
+- Inspect the implementation.
+- Clearly distinguish:
+  - **CURRENT IMPLEMENTATION** — what exists in the repo today
+  - **DOCUMENTED STANDARD / PROJECT STANDARD** — how future work should behave
+  - **PLANNED / PROPOSED BEHAVIOR** — not built yet
+- Never document planned behavior as if it already exists.
+
+Default when docs and code disagree and the user did not ask to change code: **update the docs to match the code**, then note any desired standard separately.
+
+### API / RPC work
+
+1. Read the relevant protobuf definitions and backend documentation first.
+2. Inspect generated clients/types in `src/gen` when available.
+3. Never invent RPC methods, request fields, response fields, services, URLs, authentication behavior, or contracts.
+4. Use generated clients/types and the shared `infrastructure/config/transport.ts` pattern (`connectrpc-bff.mdc`).
+
+---
+
+## 3. Make the smallest necessary change
+
+Before modifying code:
+
+- Understand the existing architecture.
+- Find existing patterns.
+- Reuse existing components, hooks, services, utilities, clients, types, and conventions whenever possible.
+- Do not introduce new abstractions unless the existing architecture genuinely requires them.
+- Do not refactor unrelated code.
+- Do not change architecture, folder structure, routing strategy, state management, API strategy, or project conventions unless the user explicitly requests that change.
+
+Prefer simple, readable, maintainable code over clever or highly generic abstractions.
+
+### Architecture protection
+
+Never change, redesign, reorganize, or replace the existing project architecture unless the user explicitly asks for an architectural change.
+
+- Do not move/rename files or layers for taste.
+- Do not replace the router, TanStack Query, Zustand theme store, or ConnectRPC.
+- Do not create duplicate patterns.
+- When adding a feature: **extend the existing architecture. Do not create a new architecture.**
+- If multiple implementations are possible, prefer the one most consistent with existing code.
+
+### Check before create
+
+Before creating a component, hook, service, utility, type, page, API client, store, validation schema, or shared UI piece:
+
+1. Search the repository.
+2. Reuse an existing implementation when it fits.
+3. Do not create duplicates.
+
+---
+
+## 4. Documentation MUST be updated after changes
+
+After implementing a change, ALWAYS check whether the change affects project documentation.
+
+If the change affects any of the following, update the relevant documentation **automatically**. Do NOT wait for the user to ask:
+
+- architecture
+- folder structure or responsibilities
+- API/RPC integration
+- authentication / authorization
+- data flow / state management
+- routing
+- shared conventions / reusable components
+- infrastructure / environment configuration
+- development workflow
+- important implementation decisions / project standards
+- error handling / caching / networking / client–server communication
+
+Documentation must describe the **actual implementation after the change**.
+
+---
+
+## 5. Documentation update workflow
+
+After making code changes:
+
+1. Re-read the relevant documentation.
+2. Compare the documented behavior with the new implementation.
+3. Identify outdated or missing information.
+4. Update only the relevant documentation.
+5. Make sure the documentation describes CURRENT behavior.
+6. Do not add speculative or future behavior.
+7. Keep documentation concise and maintainable.
+8. Do not duplicate the same information across multiple documents unnecessarily.
+9. Keep `docs/architecture.md` and `.cursor/rules/architecture.mdc` aligned when structure/placement changes.
+10. Keep `docs/backend/` aligned when Connect/auth/BFF usage changes.
+
+---
+
+## 6. Final verification is mandatory
+
+Before considering a task complete:
+
+1. Verify the changed code.
+2. Verify imports and types.
+3. Verify the relevant project rules were followed.
+4. Verify the relevant documentation reflects the final implementation.
+5. Check for duplicated or conflicting documentation.
+6. Run the most relevant available validation:
+   - typecheck (`npx tsc -b`)
+   - lint
+   - tests
+   - build
+   - or the smallest relevant verification command
+7. If verification cannot be run, explicitly state what could not be verified and why.
+
+Never claim that something was verified if it was not actually verified.
+
+---
+
+## 7. Required order for every non-trivial task
+
+```text
+1. READ      — relevant docs + applicable Cursor rules
+2. INSPECT   — existing code; search for reuse
+3. PLAN      — smallest change that fits existing architecture
+4. IMPLEMENT — extend current patterns; no unrelated refactors
+5. DOCUMENT  — update docs/rules when behavior or conventions changed
+6. VERIFY    — run checks; report honestly what was/wasn't verified
+```
+
+---
+
+## Source of truth order
+
+1. Actual code in `genius-web` (current implementation)
+2. `../new-hires` protos (request/response shape for APIs)
+3. `docs/` and `.cursor/rules/`
+4. `../new-hires/docs/` for product meaning
+
+If a prose doc and a `.proto` disagree on request/response shape, follow the proto and note the conflict.
